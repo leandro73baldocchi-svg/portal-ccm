@@ -365,7 +365,7 @@ function App() {
                    </div>
                    <div>
                       <p className="text-sm font-bold text-blue-900">Inscrições e Vagas</p>
-                      <p className="text-xs text-blue-700">Procure a gestão do CEU com documentos originais para verificar a disponibilidade de vagas nestas atividades.</p>
+                      <p className="text-xs text-blue-700">Procure a gestão do CEU com a sua CARTERINHA para verificar a disponibilidade de vagas nestas atividades.</p>
                    </div>
                 </div>
              </div>
