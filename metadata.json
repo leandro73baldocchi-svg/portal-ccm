@@ -1,0 +1,5 @@
+{
+  "name": "Consulta Alunos",
+  "description": "Aplicativo para consulta rápida de dados de alunos via Google Sheets.",
+  "requestFramePermissions": []
+}
