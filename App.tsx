@@ -14,6 +14,9 @@ function App() {
   const [searchResults, setSearchResults] = useState<Student[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [activeTab, setActiveTab] = useState<'busca' | 'atividades' | 'espacos'>('busca');
+  
+  // Estado para o Alerta de Uso Interno
+  const [showInternalAlert, setShowInternalAlert] = useState(true);
 
   // Filtros de Espaço
   const [spaceSearchTerm, setSpaceSearchTerm] = useState('');
@@ -28,11 +31,9 @@ function App() {
     setIsLoading(true);
     setError(null);
     try {
-      // Busca Alunos
       const studentData = await fetchSheetData(DEFAULT_CONFIG);
       setStudents(studentData);
 
-      // Busca Espaços
       try {
         const spacesData = await fetchSheetData({
           ...DEFAULT_CONFIG,
@@ -44,7 +45,6 @@ function App() {
         setSpaces([]);
       }
 
-      // Busca Atividades
       try {
         const activitiesData = await fetchSheetData({
           ...DEFAULT_CONFIG,
@@ -165,7 +165,39 @@ function App() {
   const daysOfWeek = ['Todos', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado', 'Domingo'];
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+    <div className={`min-h-screen bg-slate-50 flex flex-col font-sans ${showInternalAlert ? 'overflow-hidden h-screen' : ''}`}>
+      
+      {/* SPLASH ALERT: USO INTERNO */}
+      {showInternalAlert && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-md animate-fade-in">
+          <div className="bg-white rounded-[2rem] shadow-2xl max-w-lg w-full overflow-hidden border border-red-100 animate-slide-up">
+            <div className="h-2 bg-red-600 w-full"></div>
+            <div className="p-8 md:p-10">
+               <div className="flex justify-center mb-6">
+                  <div className="bg-red-50 p-4 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-12 h-12 text-red-600">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.008v.008H12v-.008Z" />
+                    </svg>
+                  </div>
+               </div>
+               
+               <h2 className="text-xl font-black text-gray-900 text-center mb-4 uppercase tracking-tight">Alerta de Uso Restrito</h2>
+               
+               <p className="text-gray-700 font-bold text-center leading-relaxed text-lg mb-8">
+                 "ESTE É UM APP DE USO INTERNO DOS SERVIDORES DA GESTÃO DO CEU. NÃO É PERMITIDA A SUA DIVULGAÇÃO EM HIPÓTESE ALGUMA!"
+               </p>
+
+               <button 
+                onClick={() => setShowInternalAlert(false)}
+                className="w-full py-5 bg-red-600 hover:bg-red-700 text-white font-black rounded-2xl shadow-xl shadow-red-200 transition-all active:scale-95 text-lg"
+               >
+                 ESTOU CIENTE E DESEJO CONTINUAR
+               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <header className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 sticky top-0 z-30">
         <div className="max-w-5xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
@@ -351,7 +383,6 @@ function App() {
                 <p className="text-sm text-gray-500">Filtre as atividades por local, professor, dia ou nome.</p>
               </div>
 
-              {/* Filtros Superiores */}
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
