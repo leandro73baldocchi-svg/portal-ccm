@@ -95,7 +95,6 @@ function App() {
     const findKey = (terms: string[], exclude?: string) => 
       keys.find(k => k !== exclude && terms.some(t => k.toLowerCase().includes(t.toLowerCase())));
 
-    // Prioridade de busca para evitar confusão entre colunas
     const nomeKey = findKey(['local', 'espaço', 'espaco']) || keys[0];
     const atividadeKey = findKey(['atividade', 'evento', 'uso'], nomeKey);
     const responsavelKey = findKey(['responsável', 'professor', 'instrutor', 'responsavel'], nomeKey);
@@ -124,24 +123,12 @@ function App() {
       const excludeList = Array.isArray(exclude) ? exclude : (exclude ? [exclude] : []);
       return keys.find(k => !excludeList.includes(k) && terms.some(t => k.toLowerCase().includes(t.toLowerCase())));
     };
-
-    /**
-     * CORREÇÃO: Buscamos primeiro o Nome da Atividade.
-     * Se o usuário tem "ATIVIDADE" e "PÚBLICO", e buscamos "público" primeiro em uma coluna 
-     * que se chama "Público da Atividade", podemos causar a inversão.
-     */
     
-    // 1. Localiza o nome da atividade (coluna principal)
     const nomeKey = findKey(['atividade', 'nome', 'curso', 'modalidade']);
-    
-    // 2. Localiza o público alvo, EXCLUINDO a coluna já identificada como nome
     const publicoKey = findKey(['público', 'publico', 'faixa', 'etária', 'etaria', 'idade'], nomeKey);
-    
-    // 3. Localiza dias e horários, excluindo os já encontrados
     const diasKey = findKey(['dia', 'semana', 'dias'], [nomeKey || '', publicoKey || '']);
     const horarioKey = findKey(['horário', 'horario', 'hora', 'tempo'], [nomeKey || '', publicoKey || '', diasKey || '']);
 
-    // Fallbacks
     const finalNomeKey = nomeKey || keys[0];
     const finalPublicoKey = publicoKey;
 
@@ -184,8 +171,7 @@ function App() {
           <div className="flex items-center gap-3">
              <div className="bg-blue-600 w-10 h-10 flex items-center justify-center rounded-xl text-white font-bold shadow-blue-200 shadow-lg">CEU</div>
              <div>
-                <h1 className="text-lg font-bold text-gray-900 leading-tight">Caminho do Mar</h1>
-                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest text-blue-600">Portal do Munícipe</p>
+                <h1 className="text-lg font-bold text-gray-900 leading-tight">CEU Caminho do Mar portal</h1>
              </div>
           </div>
           
@@ -368,7 +354,6 @@ function App() {
               {/* Filtros Superiores */}
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Busca por Texto (Atividade ou Responsável) */}
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Atividade ou Responsável</label>
                     <div className="relative">
@@ -385,7 +370,6 @@ function App() {
                     </div>
                   </div>
 
-                  {/* Filtro por Espaço */}
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Selecione o Local</label>
                     <select 
@@ -398,7 +382,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* Filtro por Dia da Semana (Scroll Horizontal no Mobile) */}
                 <div className="space-y-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Dia da Semana</label>
                   <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
@@ -415,7 +398,6 @@ function App() {
                 </div>
               </div>
 
-              {/* Contador de Resultados */}
               <div className="mt-8 mb-4 flex items-center justify-between border-b border-gray-50 pb-2 px-2">
                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                    {filteredSpaces.length === 0 ? 'Nenhum resultado' : `${filteredSpaces.length} Atividades encontradas`}
@@ -430,7 +412,6 @@ function App() {
                  )}
               </div>
 
-              {/* Grid de Resultados */}
               {filteredSpaces.length === 0 ? (
                 <div className="text-center py-24 bg-slate-50 rounded-3xl border border-dashed border-gray-200">
                   <div className="text-5xl mb-4 grayscale opacity-50">🗓️</div>
@@ -500,7 +481,7 @@ function App() {
       </main>
       
       <footer className="bg-slate-900 text-slate-400 py-12 px-6">
-         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-4">
                <h4 className="text-white font-bold text-lg">CEU Caminho do Mar</h4>
                <p className="text-sm leading-relaxed">Promovendo educação, cultura e esporte para a comunidade da região.</p>
@@ -521,7 +502,7 @@ function App() {
                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
                      </svg>
-                     (11) 5625-5070
+                     (11) 3396-5550
                   </li>
                   <li className="flex items-start gap-2">
                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mt-0.5">
@@ -537,14 +518,6 @@ function App() {
                      Seg a Sex: 07:00 às 22:00
                   </li>
                </ul>
-            </div>
-
-            <div className="space-y-4">
-               <h4 className="text-white font-bold text-sm uppercase tracking-widest">Portal Público</h4>
-               <p className="text-xs">Este sistema é uma ferramenta de consulta para munícipes e não substitui o atendimento presencial para efetivação de matrículas.</p>
-               <div className="pt-4">
-                  <span className="text-[10px] bg-slate-800 text-slate-500 px-2 py-1 rounded">Versão 1.9.2-QUERYFIX</span>
-               </div>
             </div>
          </div>
          <div className="max-w-5xl mx-auto mt-12 pt-8 border-t border-slate-800 text-center text-[10px] text-slate-600">
