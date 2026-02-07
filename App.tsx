@@ -92,15 +92,17 @@ function App() {
 
   const getSpaceDetails = (space: SpaceUsage) => {
     const keys = Object.keys(space);
-    const findKey = (terms: string[]) => keys.find(k => terms.some(t => k.toLowerCase().includes(t.toLowerCase())));
+    const findKey = (terms: string[], exclude?: string) => 
+      keys.find(k => k !== exclude && terms.some(t => k.toLowerCase().includes(t.toLowerCase())));
 
+    // Prioridade de busca para evitar confusão entre colunas
     const nomeKey = findKey(['local', 'espaço', 'espaco']) || keys[0];
-    const atividadeKey = findKey(['atividade', 'evento', 'uso']);
-    const responsavelKey = findKey(['responsável', 'professor', 'instrutor', 'responsavel']);
-    const diaKey = findKey(['dia', 'semana']);
-    const inicioKey = findKey(['início', 'inicio', 'começo', 'das']);
-    const terminoKey = findKey(['término', 'termino', 'fim', 'até', 'ate']);
-    const faixaEtariaKey = findKey(['faixa', 'etária', 'etaria', 'idade', 'público', 'publico']);
+    const atividadeKey = findKey(['atividade', 'evento', 'uso'], nomeKey);
+    const responsavelKey = findKey(['responsável', 'professor', 'instrutor', 'responsavel'], nomeKey);
+    const diaKey = findKey(['dia', 'semana'], nomeKey);
+    const inicioKey = findKey(['início', 'inicio', 'começo', 'das'], nomeKey);
+    const terminoKey = findKey(['término', 'termino', 'fim', 'até', 'ate'], nomeKey);
+    const faixaEtariaKey = findKey(['faixa', 'etária', 'etaria', 'idade', 'público', 'publico'], nomeKey);
 
     const capturedKeys = [nomeKey, atividadeKey, responsavelKey, diaKey, inicioKey, terminoKey, faixaEtariaKey];
 
@@ -118,19 +120,36 @@ function App() {
 
   const getActivityDetails = (act: ActivityData) => {
     const keys = Object.keys(act);
-    const findKey = (terms: string[]) => keys.find(k => terms.some(t => k.toLowerCase().includes(t.toLowerCase())));
+    const findKey = (terms: string[], exclude?: string | string[]) => {
+      const excludeList = Array.isArray(exclude) ? exclude : (exclude ? [exclude] : []);
+      return keys.find(k => !excludeList.includes(k) && terms.some(t => k.toLowerCase().includes(t.toLowerCase())));
+    };
 
-    // Lógica mais rigorosa para não confundir Atividade com Público
-    const publicoKey = findKey(['público', 'publico', 'faixa', 'etária', 'etaria', 'idade']);
-    const nomeKey = findKey(['atividade', 'nome', 'curso']) || keys.find(k => k !== publicoKey) || keys[0];
-    const diasKey = findKey(['dia', 'semana', 'dias']);
-    const horarioKey = findKey(['horário', 'horario', 'hora', 'tempo']);
+    /**
+     * CORREÇÃO: Buscamos primeiro o Nome da Atividade.
+     * Se o usuário tem "ATIVIDADE" e "PÚBLICO", e buscamos "público" primeiro em uma coluna 
+     * que se chama "Público da Atividade", podemos causar a inversão.
+     */
+    
+    // 1. Localiza o nome da atividade (coluna principal)
+    const nomeKey = findKey(['atividade', 'nome', 'curso', 'modalidade']);
+    
+    // 2. Localiza o público alvo, EXCLUINDO a coluna já identificada como nome
+    const publicoKey = findKey(['público', 'publico', 'faixa', 'etária', 'etaria', 'idade'], nomeKey);
+    
+    // 3. Localiza dias e horários, excluindo os já encontrados
+    const diasKey = findKey(['dia', 'semana', 'dias'], [nomeKey || '', publicoKey || '']);
+    const horarioKey = findKey(['horário', 'horario', 'hora', 'tempo'], [nomeKey || '', publicoKey || '', diasKey || '']);
+
+    // Fallbacks
+    const finalNomeKey = nomeKey || keys[0];
+    const finalPublicoKey = publicoKey;
 
     return {
-      nome: act[nomeKey || ''] || '-',
+      nome: act[finalNomeKey] || '-',
       dias: (diasKey && act[diasKey]) || '-',
       horario: (horarioKey && act[horarioKey]) || '-',
-      publico: (publicoKey && act[publicoKey]) || 'Livre'
+      publico: (finalPublicoKey && act[finalPublicoKey]) || 'Livre'
     };
   };
 
@@ -524,7 +543,7 @@ function App() {
                <h4 className="text-white font-bold text-sm uppercase tracking-widest">Portal Público</h4>
                <p className="text-xs">Este sistema é uma ferramenta de consulta para munícipes e não substitui o atendimento presencial para efetivação de matrículas.</p>
                <div className="pt-4">
-                  <span className="text-[10px] bg-slate-800 text-slate-500 px-2 py-1 rounded">Versão 1.9.1-FIX</span>
+                  <span className="text-[10px] bg-slate-800 text-slate-500 px-2 py-1 rounded">Versão 1.9.2-QUERYFIX</span>
                </div>
             </div>
          </div>
