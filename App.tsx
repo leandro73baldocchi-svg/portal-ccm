@@ -94,7 +94,7 @@ function App() {
     const keys = Object.keys(space);
     const findKey = (terms: string[]) => keys.find(k => terms.some(t => k.toLowerCase().includes(t.toLowerCase())));
 
-    const nomeKey = keys[0];
+    const nomeKey = findKey(['local', 'espaço', 'espaco']) || keys[0];
     const atividadeKey = findKey(['atividade', 'evento', 'uso']);
     const responsavelKey = findKey(['responsável', 'professor', 'instrutor', 'responsavel']);
     const diaKey = findKey(['dia', 'semana']);
@@ -120,13 +120,14 @@ function App() {
     const keys = Object.keys(act);
     const findKey = (terms: string[]) => keys.find(k => terms.some(t => k.toLowerCase().includes(t.toLowerCase())));
 
-    const nomeKey = findKey(['atividade', 'nome', 'curso']) || keys[0];
+    // Lógica mais rigorosa para não confundir Atividade com Público
+    const publicoKey = findKey(['público', 'publico', 'faixa', 'etária', 'etaria', 'idade']);
+    const nomeKey = findKey(['atividade', 'nome', 'curso']) || keys.find(k => k !== publicoKey) || keys[0];
     const diasKey = findKey(['dia', 'semana', 'dias']);
     const horarioKey = findKey(['horário', 'horario', 'hora', 'tempo']);
-    const publicoKey = findKey(['público', 'publico', 'faixa', 'etária', 'etaria', 'idade']);
 
     return {
-      nome: act[nomeKey] || '-',
+      nome: act[nomeKey || ''] || '-',
       dias: (diasKey && act[diasKey]) || '-',
       horario: (horarioKey && act[horarioKey]) || '-',
       publico: (publicoKey && act[publicoKey]) || 'Livre'
@@ -523,7 +524,7 @@ function App() {
                <h4 className="text-white font-bold text-sm uppercase tracking-widest">Portal Público</h4>
                <p className="text-xs">Este sistema é uma ferramenta de consulta para munícipes e não substitui o atendimento presencial para efetivação de matrículas.</p>
                <div className="pt-4">
-                  <span className="text-[10px] bg-slate-800 text-slate-500 px-2 py-1 rounded">Versão 1.9.0-LIVE</span>
+                  <span className="text-[10px] bg-slate-800 text-slate-500 px-2 py-1 rounded">Versão 1.9.1-FIX</span>
                </div>
             </div>
          </div>
